@@ -1,4 +1,3 @@
-
 export type Outcome = {
   id: string
   subject: string
@@ -6,6 +5,12 @@ export type Outcome = {
   code: string // e.g., 'ELA6-1.1'
   description: string
   jurisdiction: 'Alberta' | 'Other'
+}
+
+export type Class = {
+  id: string
+  name: string
+  section: string
 }
 
 export type TemplateField =
