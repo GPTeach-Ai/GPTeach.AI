@@ -1,45 +1,46 @@
+import React, { useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import type { RootState } from '../app/store'
+import { createPlan, setCurrentPlan, updatePlan, setOutcomesForPlan } from '../features/plans/plansSlice'
+import GlassCard from '../components/GlassCard'
+import OutcomePicker from '../components/OutcomePicker'
+import RichTextEditor from '../components/RichTextEditor'
+import ActivitiesEditor from '../components/ActivitiesEditor'
+import MaterialsLibrary from '../components/MaterialsLibrary'
+import PromptPreview from '../components/PromptPreview'
+import ControlsBar from '../components/ControlsBar'
+import { planToMarkdown, exportMarkdown, exportJSON } from '../lib/exporters'
+import type { Outcome } from '../lib/types'
 
-  import React, { useMemo } from 'react'
-  import { useDispatch, useSelector } from 'react-redux'
-  import type { RootState } from '../app/store'
-  import { createPlan, setCurrentPlan, updatePlan, setOutcomesForPlan } from '../features/plans/plansSlice'
-  import GlassCard from '../components/GlassCard'
-  import OutcomePicker from '../components/OutcomePicker'
-  import RichTextEditor from '../components/RichTextEditor'
-  import ActivitiesEditor from '../components/ActivitiesEditor'
-  import MaterialsLibrary from '../components/MaterialsLibrary'
-  import PromptPreview from '../components/PromptPreview'
-  import ControlsBar from '../components/ControlsBar'
-  import { planToMarkdown, exportMarkdown, exportJSON } from '../lib/exporters'
-  import type { Outcome } from '../lib/types'
+export default function Builder() {
+  const dispatch = useDispatch()
+  const plans = useSelector((s: RootState) => s.plans.items)
+  const currentId = useSelector((s: RootState) => s.plans.currentId) || plans[0]?.id
+  const plan = plans.find(p => p.id === currentId)!
 
-  export default function Builder() {
-    const dispatch = useDispatch()
-    const plans = useSelector((s: RootState) => s.plans.items)
-    const currentId = useSelector((s: RootState) => s.plans.currentId) || plans[0]?.id
-    const plan = plans.find(p => p.id === currentId)!
-
-    const prompt = useMemo(() => {
-      const codes = plan.outcomes.map(o => o.code).join(', ')
-      return `Create a lesson plan with the following details:
+  const prompt = useMemo(() => {
+    const codes = plan.outcomes.map(o => o.code).join(', ')
+    return `Create a lesson plan with the following details:
 - Grade: ${plan.grade}
 - Subject: ${plan.subject}
 - Duration: ${plan.duration} minutes
 - Outcomes: ${codes}
 - Constraints: differentiate for diverse learners; include materials and assessments.
 Use the following structure: Objectives, Materials, Prior Knowledge, Timed Activities, Assessment, Differentiation, Extensions, References. Include rubric.`
-    }, [plan])
+  }, [plan])
 
-    const share = () => {
-      const md = planToMarkdown(plan)
-      const encoded = encodeURIComponent(md)
-      const url = `${location.origin}${location.pathname}#share=${encoded}`
-      navigator.clipboard.writeText(url)
-      alert('Public link copied to clipboard (client-only demo).')
-    }
+  const share = () => {
+    const md = planToMarkdown(plan)
+    const encoded = encodeURIComponent(md)
+    const url = `${location.origin}${location.pathname}#share=${encoded}`
+    navigator.clipboard.writeText(url)
+    alert('Public link copied to clipboard (client-only demo).')
+  }
 
-    return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  return (
+    // This wrapper ensures the page content is centered and scrolls correctly within the new AppLayout.
+    <div className="max-w-7xl mx-auto px-4 h-full overflow-y-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 py-6">
         <div className="lg:col-span-2 space-y-6">
           <GlassCard>
             <div className="flex items-center justify-between mb-4">
@@ -130,5 +131,6 @@ Use the following structure: Objectives, Materials, Prior Knowledge, Timed Activ
           </GlassCard>
         </div>
       </div>
-    )
-  }
+    </div>
+  )
+}

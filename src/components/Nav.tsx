@@ -1,11 +1,12 @@
+// src/components/Nav.tsx (Updated)
 
-import { Link, NavLink } from 'react-router-dom'
-import { BookOpen, ListChecks, LayoutTemplate, Library, Settings, FileText } from 'lucide-react'
+import { Link, NavLink } from 'react-router-dom';
+import { BookOpen, ListChecks, LayoutTemplate, Library, Settings, FileText, ClipboardEdit } from 'lucide-react';
 
 export default function Nav() {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     'px-3 py-2 rounded-xl hover:bg-emerald-100/60 dark:hover:bg-emerald-900/30 ' +
-    (isActive ? 'bg-emerald-100/80 dark:bg-emerald-900/40 ' : '')
+    (isActive ? 'bg-emerald-100/80 dark:bg-emerald-900/40 ' : '');
 
   return (
     <div className="flex items-center justify-between mb-6">
@@ -15,6 +16,8 @@ export default function Nav() {
       </Link>
       <nav className="flex gap-2 text-sm">
         <NavLink to="/" className={linkClass}><BookOpen className="inline h-4 w-4 mr-1" /> Builder</NavLink>
+        {/* New Link to the AI Planner Route */}
+        <NavLink to="/planner" className={linkClass}><ClipboardEdit className="inline h-4 w-4 mr-1" /> AI Planner</NavLink>
         <NavLink to="/templates" className={linkClass}><LayoutTemplate className="inline h-4 w-4 mr-1" /> Templates</NavLink>
         <NavLink to="/outcomes" className={linkClass}><ListChecks className="inline h-4 w-4 mr-1" /> Outcomes</NavLink>
         <NavLink to="/library" className={linkClass}><Library className="inline h-4 w-4 mr-1" /> Materials</NavLink>
@@ -22,5 +25,5 @@ export default function Nav() {
         <NavLink to="/settings" className={linkClass}><Settings className="inline h-4 w-4 mr-1" /> Settings</NavLink>
       </nav>
     </div>
-  )
+  );
 }
