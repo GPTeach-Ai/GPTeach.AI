@@ -1,103 +1,64 @@
-import React, { useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom';
-import type { RootState } from '../app/store'
-import { addTemplate, deleteTemplate, updateTemplate } from '../features/templates/templatesSlice'
-import { applyTemplateToPlan } from '../features/plans/plansSlice'; // Corrected import
-import GlassCard from '../components/GlassCard'
-import type { TemplateField, Template } from '../lib/types'
+// src/routes/Templates.tsx (Corrected)
 
-const allFields: TemplateField[] = [
-  'title','grade','subject','duration','outcomes','objectives','materials','priorKnowledge',
-  'activities','assessment','differentiation','extensions','references','rubric'
-]
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux'; // Corrected import
+import { useNavigate } from 'react-router-dom';
+import type { RootState } from '../app/store';
+import { applyTemplateToPlan } from '../features/plans/plansSlice';
+import GlassCard from '../components/GlassCard';
+import type { Template } from '../lib/types';
+import { lessonPlanTemplates } from '../lib/templatesData';
+import TemplatePreview from '../components/TemplatePreview';
 
 export default function Templates() {
-  const { items } = useSelector((s: RootState) => s.templates)
-  const plans = useSelector((s: RootState) => s.plans.items)
-  const currentPlanId = useSelector((s: RootState) => s.plans.currentId) || plans[0]?.id
+  const plans = useSelector((s: RootState) => s.plans.items);
+  const currentPlanId = useSelector((s: RootState) => s.plans.currentId) || plans[0]?.id;
   
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [name, setName] = useState('New Template')
-  const [fields, setFields] = useState<TemplateField[]>(['title', 'grade', 'subject', 'duration', 'outcomes', 'activities'])
-
-  const toggleField = (f: TemplateField) =>
-    setFields(fields.includes(f) ? fields.filter(x => x !== f) : [...fields, f])
-
-  const create = () => {
-    dispatch(addTemplate(name, fields, ['{duration}','{grade}','{subject}','{outcomeCodes}']))
-    setName('New Template')
-    setFields(['title', 'grade', 'subject', 'duration', 'outcomes', 'activities'])
-  }
-
-  const update = (tpl: Template, delta: Partial<Template>) => {
-    dispatch(updateTemplate({ ...tpl, ...delta }))
-  }
 
   const handleApplyTemplate = (template: Template) => {
     if (currentPlanId) {
-      dispatch(applyTemplateToPlan({ planId: currentPlanId, fields: template.fields }));
-      // Optional: navigate to the planner to see the changes
+      dispatch(applyTemplateToPlan({ planId: currentPlanId, template }));
       navigate('/planner');
     } else {
       alert("No active lesson plan to apply the template to. Please create a plan first.");
     }
-  }
+  };
 
   return (
     <div className="p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <GlassCard className="space-y-3">
-          <h2 className="text-xl font-semibold">Create Template</h2>
-          <input className="w-full px-3 py-2 rounded-xl bg-white/70 dark:bg-gray-800/50 border border-white/40 dark:border-gray-700"
-            value={name} onChange={(e) => setName(e.target.value)} />
-          <div className="flex flex-wrap gap-2">
-            {allFields.map(f => (
-              <label key={f} className={"px-3 py-1 rounded-full border cursor-pointer " + (fields.includes(f) ? "bg-emerald-100" : "bg-white/60")}>
-                <input type="checkbox" className="mr-2" checked={fields.includes(f)} onChange={() => toggleField(f)} />
-                {f}
-              </label>
-            ))}
-          </div>
-          <button onClick={create} className="px-4 py-2 rounded-xl bg-accent-500 text-white">Add Template</button>
-        </GlassCard>
-
-        <div className="lg:col-span-2 space-y-4">
-          {items.map((tpl) => (
-            <GlassCard key={tpl.id} className="space-y-3">
-              <div className="flex items-center gap-3">
-                <input className="flex-1 px-3 py-2 rounded-xl bg-white/70 dark:bg-gray-800/50 border"
-                  value={tpl.name} onChange={(e) => update(tpl, { name: e.target.value })} />
-                <button onClick={() => handleApplyTemplate(tpl)} className="px-3 py-2 rounded-xl bg-emerald-100 text-emerald-700">Apply</button>
-                <button onClick={() => dispatch(deleteTemplate(tpl.id))} className="px-3 py-2 rounded-xl bg-red-100 text-red-700">Delete</button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {allFields.map((f) => {
-                  const active = tpl.fields.includes(f)
-                  const toggle = () => {
-                    const next = active ? tpl.fields.filter(x => x !== f) : [...tpl.fields, f]
-                    update(tpl, { fields: next })
-                  }
-                  return (
-                    <button key={f} onClick={toggle} className={"px-3 py-1 rounded-full border " + (active ? "bg-emerald-100" : "bg-white/60")}>
-                      {f}
-                    </button>
-                  )
-                })}
-              </div>
-              <div>
-                <label className="block text-sm mb-1">Variables (comma-separated)</label>
-                <input className="w-full px-3 py-2 rounded-xl bg-white/70 dark:bg-gray-800/50 border"
-                  value={(tpl.variables || []).join(', ')}
-                  onChange={(e) => update(tpl, { variables: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })} />
-              </div>
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+          Lesson Plan Templates
+        </h1>
+        <p className="text-slate-600 dark:text-slate-400 mb-8">
+          Choose a pre-defined structure to kickstart your planning process.
+        </p>
+        <div className="space-y-8">
+          {lessonPlanTemplates.map((tpl) => (
+            <GlassCard key={tpl.id} className="!p-0 overflow-hidden">
+                <div className="p-5">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h3 className="text-lg font-semibold">{tpl.name}</h3>
+                            <p className="text-sm text-slate-500 mt-1">{tpl.summary}</p>
+                        </div>
+                        <button 
+                            onClick={() => handleApplyTemplate(tpl)} 
+                            className="px-4 py-2 rounded-lg bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-600"
+                        >
+                            Use Template
+                        </button>
+                    </div>
+                </div>
+                <div className="bg-slate-50 dark:bg-slate-800/50 p-4">
+                    <TemplatePreview fields={tpl.fields} />
+                </div>
             </GlassCard>
           ))}
-          {items.length === 0 && <p className="text-sm text-gray-500">No templates yet.</p>}
         </div>
       </div>
     </div>
-  )
+  );
 }
