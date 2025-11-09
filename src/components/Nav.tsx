@@ -26,11 +26,6 @@ export default function Nav() {
             <span>Home</span>
           </NavLink>
           
-          <NavLink to="/drafts" className={linkClass}>
-            <FileText size={18} />
-            <span>Drafts</span>
-          </NavLink>
-          
           <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
             <h3 className="px-3 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Teaching Tools</h3>
 
@@ -46,10 +41,6 @@ export default function Nav() {
               <NavLink to="/outcomes" className={linkClass}>
                 <ListChecks size={18} />
                 <span>Outcomes</span>
-              </NavLink>
-              <NavLink to="/library" className={linkClass}>
-                <Library size={18} />
-                <span>Materials</span>
               </NavLink>
             </div>
           </div>

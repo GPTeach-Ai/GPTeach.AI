@@ -9,12 +9,9 @@ import { store } from './app/store';
 
 // Route Components
 import AppLayout from './routes/AppLayout';
-import Builder from './routes/Builder';
 import Templates from './routes/Templates';
 import Outcomes from './routes/Outcomes';
-import Library from './routes/Library';
 import Settings from './routes/Settings';
-import Drafts from './routes/Drafts';
 import LessonPlanner from './routes/LessonPlanner';
 
 const router = createBrowserRouter([
@@ -22,12 +19,9 @@ const router = createBrowserRouter([
     path: '/',
     element: <AppLayout />, // AppLayout is now the shell for ALL pages.
     children: [
-      { index: true, element: <Builder /> },
-      { path: 'planner', element: <LessonPlanner /> }, // Planner is now a child.
+      { index: true, path: 'planner', element: <LessonPlanner /> }, // Planner is now a child.
       { path: 'templates', element: <Templates /> },
       { path: 'outcomes', element: <Outcomes /> },
-      { path: 'library', element: <Library /> },
-      { path: 'drafts', element: <Drafts /> },
       { path: 'settings', element: <Settings /> },
     ],
   },
