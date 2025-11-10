@@ -1,5 +1,5 @@
-import React, { createContext, useState, useContext, useMemo, useCallback } from 'react';
-import { Plus, Minus, GripVertical, Bold, Italic, Underline as UnderlineIcon, Strikethrough, Link as LinkIcon, List, ListOrdered, Pilcrow, CheckSquare } from 'lucide-react';
+import React, { createContext, useState, useContext, useMemo, useCallback, useRef, useEffect } from 'react';
+import { Plus, Minus, GripVertical, Bold, Italic, Underline as UnderlineIcon, Strikethrough, Link as LinkIcon, List, ListOrdered, Pilcrow, CheckSquare, ChevronDown } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import type { RootState } from '../app/store';
@@ -104,14 +104,48 @@ function SortableCell({ cell, planId, rowId }: { cell: Cell; planId: string; row
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: cell.id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1 };
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const controlsRef = useRef<HTMLDivElement>(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (controlsRef.current && !controlsRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [controlsRef]);
+
+  const handleSplit = () => {
+    dispatch(splitPlanCell({ planId, rowId, cellId: cell.id }));
+    setIsMenuOpen(false);
+  }
+
+  const handleMerge = () => {
+    dispatch(mergePlanCell({ planId, rowId, cellId: cell.id }));
+    // No need to close menu, as the cell will be removed
+  }
+
   return (
     <Panel defaultSize={cell.size || 25} minSize={10} className="flex !overflow-visible">
         <div ref={setNodeRef} style={style} className="w-full h-full relative group/cell hover:z-20" {...attributes}>
             <RichTextCellEditor value={cell.content} onChange={(newContent) => dispatch(updatePlanCell({ planId, rowId, cellId: cell.id, content: newContent }))} placeholder={cell.placeholder} />
-            <div className="absolute top-1/2 -translate-y-1/2 right-1 translate-x-full flex flex-col items-center gap-0.5 p-0.5 rounded-lg bg-white/90 dark:bg-slate-800/90 shadow-md border border-slate-200/80 dark:border-slate-700/80 opacity-0 group-hover/cell:opacity-100 transition-opacity z-20">
-                <button {...listeners} className="p-1 rounded-md text-slate-500 cursor-grab active:cursor-grabbing hover:bg-slate-100 dark:hover:bg-slate-700"><GripVertical size={14} /></button>
-                <button onClick={() => dispatch(splitPlanCell({ planId, rowId, cellId: cell.id }))} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700" title="Add Cell"><Plus size={14} /></button>
-                <button onClick={() => dispatch(mergePlanCell({ planId, rowId, cellId: cell.id }))} className="p-1 rounded-md text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/40" title="Remove Cell"><Minus size={14} /></button>
+            <div ref={controlsRef} className="absolute top-2 right-2 flex flex-col items-center gap-0.5 p-0.5 rounded-lg bg-white/90 dark:bg-slate-800/90 shadow-md border border-slate-200/80 dark:border-slate-700/80 opacity-0 group-hover/cell:opacity-100 transition-opacity z-30">
+                {isMenuOpen ? (
+                  <>
+                    <button onClick={handleSplit} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700" title="Add Cell"><Plus size={14} /></button>
+                    <button onClick={handleMerge} className="p-1 rounded-md text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/40" title="Remove Cell"><Minus size={14} /></button>
+                  </>
+                ) : (
+                  <>
+                    <button {...listeners} className="p-1 rounded-md text-slate-500 cursor-grab active:cursor-grabbing hover:bg-slate-100 dark:hover:bg-slate-700" title="Move Cell"><GripVertical size={14} /></button>
+                    <button onClick={() => setIsMenuOpen(true)} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700" title="More options"><ChevronDown size={14} /></button>
+                  </>
+                )}
             </div>
         </div>
     </Panel>
@@ -138,7 +172,7 @@ function SortableRow({ row, planId, rowIndex }: { row: Row; planId: string; rowI
 
   return (
     <div ref={setNodeRef} style={style} className="group flex border-b border-slate-300 dark:border-slate-600 last:border-b-0 transition-colors">
-      <div className="w-10 flex-shrink-0 flex items-center justify-center transition-colors group-hover:bg-slate-100 dark:group-hover:bg-slate-700/40">
+      <div className="w-10 flex-shrink-0 flex items-center justify-center">
         <div className="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center gap-0.5">
           <button {...attributes} {...listeners} className="p-1 rounded-md text-slate-500 cursor-grab active:cursor-grabbing hover:bg-slate-200 dark:hover:bg-slate-600" title="Move Row"><GripVertical size={14} /></button>
           <button onClick={() => dispatch(addPlanRow({ planId, rowIndex }))} className="p-1 rounded-md text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-600" title="Add Row Below"><Plus size={14} /></button>
