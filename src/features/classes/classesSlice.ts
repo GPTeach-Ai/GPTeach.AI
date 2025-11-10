@@ -44,11 +44,23 @@ const classesSlice = createSlice({
         state.items[index].archived = false;
       }
     },
+    softDeleteClass(state, action: PayloadAction<string>) {
+        const classItem = state.items.find(c => c.id === action.payload);
+        if (classItem) {
+            classItem.deletedAt = new Date().toISOString();
+        }
+    },
+    restoreClass(state, action: PayloadAction<string>) {
+        const classItem = state.items.find(c => c.id === action.payload);
+        if (classItem) {
+            classItem.deletedAt = null;
+        }
+    },
     deleteClass(state, action: PayloadAction<string>) {
       state.items = state.items.filter(c => c.id !== action.payload);
     }
   },
 });
 
-export const { addClass, updateClass, archiveClass, unarchiveClass, deleteClass } = classesSlice.actions;
+export const { addClass, updateClass, archiveClass, unarchiveClass, deleteClass, softDeleteClass, restoreClass } = classesSlice.actions;
 export default classesSlice.reducer;
