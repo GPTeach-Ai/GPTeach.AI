@@ -1,7 +1,17 @@
 // Google Gemini AI Service
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const GEMINI_API_KEY = 'AIzaSyB5s9CeXzQdm030IN9OclYdH5CVpqPnQHM';
+const resolvedApiKey =
+  (typeof import.meta !== 'undefined' && (import.meta as any)?.env?.VITE_GEMINI_API_KEY) ??
+  (typeof process !== 'undefined' ? (process as any)?.env?.VITE_GEMINI_API_KEY : undefined);
+
+const GEMINI_API_KEY = resolvedApiKey ?? '';
+
+if (!GEMINI_API_KEY) {
+  throw new Error(
+    'Gemini API key is missing. Set VITE_GEMINI_API_KEY in your environment before using Gemini services.'
+  );
+}
 const MODEL_NAME = 'gemini-2.5-flash';
 
 // Initialize Gemini AI
