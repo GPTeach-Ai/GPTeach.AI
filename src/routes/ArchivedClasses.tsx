@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../app/store';
 import { ArchiveRestore, Trash2, MoreVertical } from 'lucide-react';
 import type { Class } from '../lib/types';
-import { unarchiveClass, deleteClass } from '../features/classes/classesSlice';
+import { unarchiveClass, softDeleteClass } from '../features/classes/classesSlice';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 
 // Card for archived classes
@@ -48,7 +48,7 @@ const ArchivedClassCard = ({ classItem, onUnarchive, onDelete }: { classItem: Cl
                                 onClick={() => { onDelete(); setIsMenuOpen(false); }}
                                 className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
                             >
-                                <Trash2 size={16} /> Delete Permanently
+                                <Trash2 size={16} /> Delete
                             </button>
                         </li>
                     </ul>
@@ -63,7 +63,7 @@ const ArchivedClassCard = ({ classItem, onUnarchive, onDelete }: { classItem: Cl
 export default function ArchivedClasses() {
   const dispatch = useDispatch();
   const { items: all_classes } = useSelector((state: RootState) => state.classes);
-  const archivedClasses = all_classes.filter(c => c.archived);
+  const archivedClasses = all_classes.filter(c => c.archived && !c.deletedAt);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [classToDelete, setClassToDelete] = useState<Class | null>(null);
@@ -75,7 +75,7 @@ export default function ArchivedClasses() {
 
   const handleConfirmDelete = () => {
     if (classToDelete) {
-      dispatch(deleteClass(classToDelete.id));
+      dispatch(softDeleteClass(classToDelete.id));
     }
     setIsDeleteModalOpen(false);
     setClassToDelete(null);

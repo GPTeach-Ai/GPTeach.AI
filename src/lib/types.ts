@@ -1,3 +1,5 @@
+// src/lib/types.ts (Corrected)
+
 export type Outcome = {
   id: string
   subject: string
@@ -17,6 +19,34 @@ export type TimedActivity = {
   details: string
 }
 
+export type Cell = {
+  id: string;
+  content: string; // HTML content from the editor
+  placeholder: string;
+  colSpan?: number;
+};
+
+export type Row = {
+  id: string;
+  cells: Cell[];
+  isHeader?: boolean;
+};
+
+export type RubricLevel = {
+  label: string
+  descriptor: string
+}
+
+export type RubricCriterion = {
+  id: string
+  name: string
+  levels: RubricLevel[]
+}
+
+export type Rubric = {
+  criteria: RubricCriterion[]
+}
+
 export type Plan = {
   id: string
   createdAt: string
@@ -25,6 +55,7 @@ export type Plan = {
   title: string
   grade: string
   subject: string
+  topic: string;
   duration: number
   outcomes: Outcome[]
   objectives: string
@@ -36,6 +67,11 @@ export type Plan = {
   extensions: string
   references: string
   rubric: Rubric
+  tableContent: Row[]
+  classId?: string
+  folderId?: string | null
+  uploadedFile?: { name: string; type: string }
+  deletedAt?: string | null;
 }
 
 export type Class = {
@@ -47,6 +83,17 @@ export type Class = {
   semester?: string
   color: string;
   archived?: boolean;
+  deletedAt?: string | null;
+}
+
+export type Folder = {
+    id: string;
+    name: string;
+    classId: string;
+    parentId: string | null;
+    createdAt: string;
+    color: string;
+    deletedAt?: string | null;
 }
 
 export type TemplateField =

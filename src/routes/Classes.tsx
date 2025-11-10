@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../app/store';
 import { Link, useNavigate } from 'react-router-dom';
-import { Folder, MoreVertical, TrendingUp, Plus } from 'lucide-react';
+import { MoreVertical, Plus, ArrowRight } from 'lucide-react';
 import type { Class } from '../lib/types';
 import CreateClassModal from '../components/CreateClassModal';
 import { archiveClass } from '../features/classes/classesSlice';
@@ -66,18 +66,19 @@ const ClassCard = ({ classItem, onEdit, onArchive }: { classItem: Class; onEdit:
 
   return (
     <div className="flex flex-col rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
-      <div className="relative p-4 h-28 text-white rounded-t-lg" style={{ backgroundColor: classItem.color }}>
-        <Link to={`/class/${classItem.id}`} className="relative z-10">
-          <h3 className="text-xl font-medium hover:underline">{classItem.name}</h3>
-        </Link>
-        {classItem.section && <p className="text-sm relative z-10">{classItem.section}</p>}
-      </div>
-      <div className="flex-grow min-h-[100px] p-4 text-sm text-slate-500 dark:text-slate-400">
-        {details || <span className="italic">No details provided.</span>}
-      </div>
-      <div className="flex items-center justify-end p-2 border-t border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
-          <button aria-label="Open gradebook" className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><TrendingUp size={20} /></button>
-          <button aria-label="Open folder" className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><Folder size={20} /></button>
+      <Link to={`/class/${classItem.id}`} className="block">
+        <div className="relative p-4 h-28 text-white rounded-t-lg" style={{ backgroundColor: classItem.color }}>
+            <h3 className="text-xl font-medium hover:underline">{classItem.name}</h3>
+          {classItem.section && <p className="text-sm relative z-10">{classItem.section}</p>}
+        </div>
+        <div className="flex-grow min-h-[100px] p-4 text-sm text-slate-500 dark:text-slate-400">
+          {details || <span className="italic">No details provided.</span>}
+        </div>
+      </Link>
+      <div className="flex items-center justify-between p-2 border-t border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+          <Link to={`/class/${classItem.id}`} className="flex items-center gap-1.5 px-3 py-1 rounded-md text-sm font-medium bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-50 dark:hover:bg-emerald-900/60 ml-1">
+             Open Classroom <ArrowRight size={14}/>
+          </Link>
           <div className="relative" ref={menuRef}>
             <button onClick={() => setIsMenuOpen(prev => !prev)} aria-label="More options" className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
                 <MoreVertical size={20} />
@@ -113,7 +114,7 @@ const ClassCard = ({ classItem, onEdit, onArchive }: { classItem: Class; onEdit:
 export default function Classes() {
   const dispatch = useDispatch();
   const { items: all_classes } = useSelector((state: RootState) => state.classes);
-  const classes = all_classes.filter(c => !c.archived);
+  const classes = all_classes.filter(c => !c.archived && !c.deletedAt);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClass, setEditingClass] = useState<Class | null>(null);
@@ -181,7 +182,7 @@ export default function Classes() {
         </div>
          {classes.length === 0 && all_classes.length > 0 && (
           <div className="text-center col-span-full py-12">
-            <p className="text-slate-500">You have no active classes. Check the "Archived Classes" tab.</p>
+            <p className="text-slate-500">You have no active classes. Check the "Archived Classes" tab or "Settings" for recently deleted items.</p>
           </div>
         )}
       </div>

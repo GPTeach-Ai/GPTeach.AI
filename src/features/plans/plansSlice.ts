@@ -6,6 +6,7 @@ type PlansState = {
   currentId?: string
 }
 
+// ... (default table and empty plan functions remain the same) ...
 const createDefaultTable = (): Row[] => [
     {
       id: nanoid(),
@@ -68,42 +69,64 @@ const createDefaultTable = (): Row[] => [
           { id: nanoid(), content: '<b>Description of activity, New learning</b>', placeholder: '', colSpan: 1 },
           { id: nanoid(), content: '<b>Check for understanding (formative, summative assessments)</b>', placeholder: '', colSpan: 1 },
       ]
+    },
+    {
+      id: nanoid(),
+      cells: [
+          { id: nanoid(), content: '', placeholder: 'Anticipatory set/hook/introduction', colSpan: 1 },
+          { id: nanoid(), content: '', placeholder: 'Body/activities/strategies (this section should be VERY detailed)', colSpan: 1 },
+          { id: nanoid(), content: '<ul><li>real world, community connections</li><li>Student Feedback opportunities</li><li>Looking ahead</li></ul>', placeholder: 'Closing', colSpan: 1 },
+      ]
     }
 ];
+const emptyPlan = (classId: string, folderId: string | null): Plan => ({
+  id: nanoid(),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  title: 'Untitled Lesson',
+  grade: '',
+  subject: '',
+  topic: '',
+  duration: 60,
+  outcomes: [],
+  objectives: '',
+  materials: [],
+  priorKnowledge: '',
+  activities: [],
+  assessment: '',
+  differentiation: '',
+  extensions: '',
+  references: '',
+  rubric: { criteria: [] },
+  tableContent: createDefaultTable(),
+  classId,
+  folderId,
+})
+
 
 // Helper to create a new table structure from a template's fields
 const createTableFromTemplate = (fields: TemplateField[]): Row[] => {
     const newRows: Row[] = [];
     const fieldToAction: Record<TemplateField, () => void> = {
-        title: () => newRows.push({
-            id: nanoid(),
-            cells: [{ id: nanoid(), content: 'Title:', placeholder: 'Enter lesson title...', colSpan: 3 }]
-        }),
-        grade: () => newRows.push({
-            id: nanoid(),
-            cells: [
-                { id: nanoid(), content: 'Grade:', placeholder: 'e.g., Grade 5', colSpan: 1 },
-                { id: nanoid(), content: 'Subject:', placeholder: 'e.g., Mathematics', colSpan: 1 },
-                { id: nanoid(), content: 'Duration (min):', placeholder: 'e.g., 60', colSpan: 1 },
-            ]
-        }),
-        subject: () => {}, // Handled with grade
-        duration: () => {}, // Handled with grade
+        title: () => {}, // Title is handled separately
+        grade: () => {}, // Grade is handled separately
+        subject: () => {}, // Subject is handled separately
+        duration: () => {}, // Duration is handled separately
         outcomes: () => newRows.push({
             id: nanoid(),
-            cells: [{ id: nanoid(), content: 'Outcomes:', placeholder: 'List program of studies outcomes...', colSpan: 3 }]
+            cells: [{ id: nanoid(), content: '<strong>Outcomes:</strong>', placeholder: 'List program of studies outcomes...', colSpan: 3 }]
         }),
         objectives: () => newRows.push({
             id: nanoid(),
-            cells: [{ id: nanoid(), content: 'Objectives:', placeholder: 'What will students be able to do?', colSpan: 3 }]
+            cells: [{ id: nanoid(), content: '<strong>Objectives:</strong>', placeholder: 'What will students be able to do?', colSpan: 3 }]
         }),
         materials: () => newRows.push({
             id: nanoid(),
-            cells: [{ id: nanoid(), content: 'Materials & Resources:', placeholder: 'List all required materials...', colSpan: 3 }]
+            cells: [{ id: nanoid(), content: '<strong>Materials & Resources:</strong>', placeholder: 'List all required materials...', colSpan: 3 }]
         }),
         priorKnowledge: () => newRows.push({
             id: nanoid(),
-            cells: [{ id: nanoid(), content: 'Prior Knowledge:', placeholder: 'What should students already know?', colSpan: 3 }]
+            cells: [{ id: nanoid(), content: '<strong>Prior Knowledge:</strong>', placeholder: 'What should students already know?', colSpan: 3 }]
         }),
         activities: () => newRows.push(
             {
@@ -124,23 +147,23 @@ const createTableFromTemplate = (fields: TemplateField[]): Row[] => {
         ),
         assessment: () => newRows.push({
             id: nanoid(),
-            cells: [{ id: nanoid(), content: 'Assessment:', placeholder: 'How will you check for understanding?', colSpan: 3 }]
+            cells: [{ id: nanoid(), content: '<strong>Assessment:</strong>', placeholder: 'How will you check for understanding?', colSpan: 3 }]
         }),
         differentiation: () => newRows.push({
             id: nanoid(),
-            cells: [{ id: nanoid(), content: 'Differentiation:', placeholder: 'How will you support diverse learners?', colSpan: 3 }]
+            cells: [{ id: nanoid(), content: '<strong>Differentiation:</strong>', placeholder: 'How will you support diverse learners?', colSpan: 3 }]
         }),
         extensions: () => newRows.push({
             id: nanoid(),
-            cells: [{ id: nanoid(), content: 'Extensions:', placeholder: 'Activities for early finishers...', colSpan: 3 }]
+            cells: [{ id: nanoid(), content: '<strong>Extensions:</strong>', placeholder: 'Activities for early finishers...', colSpan: 3 }]
         }),
         references: () => newRows.push({
             id: nanoid(),
-            cells: [{ id: nanoid(), content: 'References:', placeholder: 'Cite any sources used...', colSpan: 3 }]
+            cells: [{ id: nanoid(), content: '<strong>References:</strong>', placeholder: 'Cite any sources used...', colSpan: 3 }]
         }),
         rubric: () => newRows.push({
             id: nanoid(),
-            cells: [{ id: nanoid(), content: 'Rubric:', placeholder: 'Define criteria for success...', colSpan: 3 }]
+            cells: [{ id: nanoid(), content: '<strong>Rubric:</strong>', placeholder: 'Define criteria for success...', colSpan: 3 }]
         }),
     };
 
@@ -153,40 +176,142 @@ const createTableFromTemplate = (fields: TemplateField[]): Row[] => {
     return newRows;
 };
 
-const emptyPlan = (): Plan => ({
-  id: nanoid(),
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  title: 'Untitled Lesson',
-  grade: '',
-  subject: '',
-  duration: 60,
-  outcomes: [],
-  objectives: '',
-  materials: [],
-  priorKnowledge: '',
-  activities: [],
-  assessment: '',
-  differentiation: '',
-  extensions: '',
-  references: '',
-  rubric: { criteria: [] },
-  tableContent: createDefaultTable(), // Use the default table structure
-})
-
 const initial: PlansState = {
-  items: [emptyPlan()],
-  currentId: undefined
+  items: [],
+  currentId: undefined,
 }
+
+type CreatePlanPayload = {
+    classId: string;
+    folderId: string | null;
+    title: string;
+    grade: string;
+    subject: string;
+    topic: string;
+    fields: TemplateField[];
+    optionalFieldContent: Partial<Record<TemplateField, string>>;
+};
 
 const plansSlice = createSlice({
   name: 'plans',
   initialState: initial,
   reducers: {
-    createPlan(state) {
-      const p = emptyPlan()
-      state.items.unshift(p)
-      state.currentId = p.id
+    addPlan(state, action: PayloadAction<Plan>) {
+        state.items.push(action.payload);
+    },
+    createPlan(state, action: PayloadAction<CreatePlanPayload>) {
+      const { classId, folderId, title, grade, subject, topic, fields, optionalFieldContent } = action.payload;
+      
+      const tableContent = createTableFromTemplate(fields);
+
+      const fieldToCellMarker: Partial<Record<TemplateField, string>> = {
+          outcomes: '<strong>Outcomes:</strong>',
+          objectives: '<strong>Objectives:</strong>',
+          materials: '<strong>Materials & Resources:</strong>',
+          priorKnowledge: '<strong>Prior Knowledge:</strong>',
+          assessment: '<strong>Assessment:</strong>',
+          differentiation: '<strong>Differentiation:</strong>',
+          extensions: '<strong>Extensions:</strong>',
+          references: '<strong>References:</strong>',
+          rubric: '<strong>Rubric:</strong>'
+      };
+
+      if (optionalFieldContent) {
+          for (const [field, content] of Object.entries(optionalFieldContent)) {
+              if (!content) continue;
+              const marker = fieldToCellMarker[field as TemplateField];
+              let cellUpdated = false;
+
+              if (marker) {
+                  for (const row of tableContent) {
+                      for (const cell of row.cells) {
+                          if (cell.content.includes(marker)) {
+                              cell.content += `<p>${content.replace(/\n/g, '<br>')}</p>`;
+                              cellUpdated = true;
+                              break;
+                          }
+                      }
+                      if (cellUpdated) break;
+                  }
+              } else if (field === 'activities') {
+                  const activitiesHeaderIndex = tableContent.findIndex(row => 
+                      row.isHeader && row.cells.some(cell => cell.content.includes('Activity Description'))
+                  );
+                  if (activitiesHeaderIndex !== -1 && activitiesHeaderIndex + 1 < tableContent.length) {
+                      const activityContentRow = tableContent[activitiesHeaderIndex + 1];
+                      if (activityContentRow.cells.length > 1) {
+                          activityContentRow.cells[1].content = `<p>${content.replace(/\n/g, '<br>')}</p>`;
+                      }
+                  }
+              }
+          }
+      }
+
+      const newPlan: Plan = {
+          ...emptyPlan(classId, folderId),
+          title,
+          grade,
+          subject,
+          topic,
+          tableContent: [
+              {
+                  id: nanoid(),
+                  cells: [
+                    { id: nanoid(), content: `<strong>Grade:</strong> ${grade}`, placeholder: '', colSpan: 1 },
+                    { id: nanoid(), content: `<strong>Subject:</strong> ${subject}`, placeholder: '', colSpan: 1 },
+                    { id: nanoid(), content: `<strong>Topic:</strong> ${topic}`, placeholder: '', colSpan: 1 },
+                  ]
+              },
+              ...tableContent
+          ],
+      };
+      
+      state.items.unshift(newPlan);
+      state.currentId = newPlan.id;
+    },
+    importUploadedPlan(state, action: PayloadAction<{ classId: string; folderId: string | null; file: { name: string; type: string } }>) {
+        const { classId, folderId, file } = action.payload;
+        const lastDotIndex = file.name.lastIndexOf('.');
+        const title = lastDotIndex > 0 ? file.name.slice(0, lastDotIndex) : file.name;
+
+        const newPlan: Plan = {
+            id: nanoid(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            title: title,
+            classId: classId,
+            folderId: folderId,
+            uploadedFile: file,
+            grade: '',
+            subject: '',
+            topic: '',
+            duration: 0,
+            outcomes: [],
+            objectives: `File uploaded: ${file.name}`,
+            materials: [],
+            priorKnowledge: '',
+            activities: [],
+            assessment: '',
+            differentiation: '',
+            extensions: '',
+            references: '',
+            rubric: { criteria: [] },
+            tableContent: [
+                {
+                    id: nanoid(),
+                    cells: [
+                        {
+                            id: nanoid(),
+                            content: `<h3>Uploaded File: ${file.name}</h3><p>This lesson plan was created from an uploaded file. You can add notes and details below.</p>`,
+                            placeholder: '',
+                            colSpan: 3
+                        }
+                    ]
+                }
+            ],
+        };
+        state.items.unshift(newPlan);
+        state.currentId = newPlan.id;
     },
     setCurrentPlan(state, action: PayloadAction<string | undefined>) {
       state.currentId = action.payload
@@ -196,6 +321,18 @@ const plansSlice = createSlice({
       if (idx >= 0) {
         state.items[idx] = { ...state.items[idx], ...action.payload, updatedAt: new Date().toISOString() }
       }
+    },
+    softDeletePlan(state, action: PayloadAction<string>) {
+        const plan = state.items.find(p => p.id === action.payload);
+        if (plan) {
+            plan.deletedAt = new Date().toISOString();
+        }
+    },
+    restorePlan(state, action: PayloadAction<string>) {
+        const plan = state.items.find(p => p.id === action.payload);
+        if (plan) {
+            plan.deletedAt = null;
+        }
     },
     deletePlan(state, action: PayloadAction<string>) {
       state.items = state.items.filter(p => p.id !== action.payload)
@@ -208,6 +345,7 @@ const plansSlice = createSlice({
     updatePlanCell(state, action: PayloadAction<{ planId: string; rowId: string; cellId: string; content: string }>) {
         const plan = state.items.find(p => p.id === action.payload.planId);
         if (plan) {
+            plan.updatedAt = new Date().toISOString();
             const row = plan.tableContent.find(r => r.id === action.payload.rowId);
             if (row) {
                 const cell = row.cells.find(c => c.id === action.payload.cellId);
@@ -220,6 +358,7 @@ const plansSlice = createSlice({
     addPlanRow(state, action: PayloadAction<{ planId: string; rowIndex?: number }>) {
         const plan = state.items.find(p => p.id === action.payload.planId);
         if (plan) {
+            plan.updatedAt = new Date().toISOString();
             const { rowIndex } = action.payload;
             const newRow: Row = { 
                 id: nanoid(), 
@@ -241,6 +380,7 @@ const plansSlice = createSlice({
     removePlanRow(state, action: PayloadAction<{ planId: string; rowId: string }>) {
         const plan = state.items.find(p => p.id === action.payload.planId);
         if (plan) {
+            plan.updatedAt = new Date().toISOString();
             plan.tableContent = plan.tableContent.filter(row => row.id !== action.payload.rowId);
         }
     },
@@ -323,17 +463,55 @@ const plansSlice = createSlice({
     applyTemplateToPlan(state, action: PayloadAction<{ planId: string; fields: TemplateField[] }>) {
         const plan = state.items.find(p => p.id === action.payload.planId);
         if (plan) {
+            plan.updatedAt = new Date().toISOString();
             plan.tableContent = createTableFromTemplate(action.payload.fields);
         }
-    }
+    },
+    duplicatePlan(state, action: PayloadAction<{ planId: string }>) {
+        const originalPlan = state.items.find(p => p.id === action.payload.planId);
+        if (originalPlan) {
+            const newPlan: Plan = {
+                ...JSON.parse(JSON.stringify(originalPlan)),
+                id: nanoid(),
+                title: `${originalPlan.title} Copy`,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            };
+            state.items.unshift(newPlan);
+        }
+    },
+    pasteCopiedPlan(state, action: PayloadAction<{ sourcePlanId: string, targetClassId: string, targetFolderId: string | null }>) {
+        const originalPlan = state.items.find(p => p.id === action.payload.sourcePlanId);
+        if (originalPlan) {
+            const newPlan: Plan = {
+                ...JSON.parse(JSON.stringify(originalPlan)),
+                id: nanoid(),
+                classId: action.payload.targetClassId,
+                folderId: action.payload.targetFolderId,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            };
+            state.items.unshift(newPlan);
+        }
+    },
+    movePlan(state, action: PayloadAction<{ planId: string; targetClassId: string; targetFolderId: string | null }>) {
+        const plan = state.items.find(p => p.id === action.payload.planId);
+        if (plan) {
+            plan.classId = action.payload.targetClassId;
+            plan.folderId = action.payload.targetFolderId;
+            plan.updatedAt = new Date().toISOString();
+        }
+    },
   }
 })
 
 export const {
-  createPlan, setCurrentPlan, updatePlan, deletePlan,
+  addPlan, createPlan, setCurrentPlan, updatePlan, deletePlan,
   setOutcomesForPlan, updatePlanCell, addPlanRow, removePlanRow,
   movePlanRow, movePlanCell, resizePlanRow, splitPlanCell, mergePlanCell,
-  applyTemplateToPlan
+  applyTemplateToPlan, importUploadedPlan,
+  duplicatePlan, pasteCopiedPlan, movePlan,
+  softDeletePlan, restorePlan
 } = plansSlice.actions
 
 export default plansSlice.reducer
