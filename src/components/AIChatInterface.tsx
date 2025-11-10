@@ -3,7 +3,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles } from 'lucide-react';
 import GlassCard from './GlassCard';
-import InlineToolbarEditor from './InlineToolbarEditor';
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
 
 interface Message {
   id: string;
@@ -12,17 +14,27 @@ interface Message {
   timestamp: Date;
 }
 
-const quickPrompts = [
-  'Draft objectives for grade 5 science on ecosystems',
-  'Suggest differentiation ideas for mixed abilities',
-  'Provide formative assessment checks for this lesson',
-];
-
 export default function AIChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        // Disable heading, blockquote, etc. for a chat interface
+        heading: false,
+        blockquote: false,
+        horizontalRule: false,
+      }),
+      Placeholder.configure({ placeholder: 'Message GPTeach AI...' }),
+    ],
+    editorProps: {
+      attributes: {
+        class: 'prose prose-sm max-w-none focus:outline-none px-4 py-3 min-h-[48px] text-[15px] leading-relaxed',
+      },
+    },
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -33,17 +45,17 @@ export default function AIChatInterface() {
   }, [messages]);
 
   const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
+    if (!editor || !editor.getText().trim()) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: inputValue,
+      content: editor.getHTML(),
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, newMessage]);
-    setInputValue('');
+    editor.commands.clearContent(true); // Clear the editor and focus
 
     // Simulate AI response
     setTimeout(() => {
@@ -55,10 +67,6 @@ export default function AIChatInterface() {
       };
       setMessages((prev) => [...prev, aiResponse]);
     }, 1000);
-  };
-
-  const handleQuickPrompt = (prompt: string) => {
-    setInputValue(prompt);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -96,23 +104,8 @@ export default function AIChatInterface() {
                   Welcome to GPTeach AI
                 </h3>
                 <p className="mb-8 max-w-md text-center text-sm text-slate-600 dark:text-slate-400">
-                  Your planning companion. Share your lesson focus, grade, or learning outcomes, and I'll help you craft prompts, activities, and assessments.
+                  I can help you create organized, effective lesson plans in less time. Tell me your subject, grade level, and objectives to get started.
                 </p>
-                
-                <div className="w-full max-w-md">
-                  <p className="mb-3 text-xs font-medium text-slate-500 dark:text-slate-400">Quick prompts</p>
-                  <div className="flex flex-col gap-2">
-                    {quickPrompts.map((prompt) => (
-                      <button
-                        key={prompt}
-                        onClick={() => handleQuickPrompt(prompt)}
-                        className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-750"
-                      >
-                        {prompt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
             ) : (
               /* Messages */
@@ -163,15 +156,11 @@ export default function AIChatInterface() {
                   className="flex-1 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm transition-all duration-200 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
                   onKeyDown={handleKeyPress}
                 >
-                  <InlineToolbarEditor
-                    value={inputValue}
-                    onChange={setInputValue}
-                    placeholder="Message GPTeach AI..."
-                  />
+                  <EditorContent editor={editor} />
                 </div>
                 <button
                   onClick={handleSendMessage}
-                  disabled={!inputValue.trim()}
+                  disabled={!editor || !editor.getText().trim()}
                   className="shrink-0 rounded-xl bg-emerald-600 p-3 text-white transition-all hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 dark:bg-emerald-500 dark:hover:bg-emerald-600 dark:disabled:bg-slate-700 dark:disabled:text-slate-500"
                   aria-label="Send message"
                 >

@@ -28,7 +28,6 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'classes', element: <Classes /> },
       { path: 'archived-classes', element: <ArchivedClasses /> },
-      { path: 'builder', element: <Builder /> },
       { path: 'planner', element: <LessonPlanner /> },
       { path: 'templates', element: <Templates /> },
       { path: 'outcomes', element: <Outcomes /> },

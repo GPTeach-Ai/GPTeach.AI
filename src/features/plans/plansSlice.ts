@@ -68,14 +68,6 @@ const createDefaultTable = (): Row[] => [
           { id: nanoid(), content: '<b>Description of activity, New learning</b>', placeholder: '', colSpan: 1 },
           { id: nanoid(), content: '<b>Check for understanding (formative, summative assessments)</b>', placeholder: '', colSpan: 1 },
       ]
-    },
-    {
-      id: nanoid(),
-      cells: [
-          { id: nanoid(), content: '', placeholder: 'Anticipatory set/hook/introduction', colSpan: 1 },
-          { id: nanoid(), content: '', placeholder: 'Body/activities/strategies (this section should be VERY detailed)', colSpan: 1 },
-          { id: nanoid(), content: '<ul><li>real world, community connections</li><li>Student Feedback opportunities</li><li>Looking ahead</li></ul>', placeholder: 'Closing', colSpan: 1 },
-      ]
     }
 ];
 
@@ -225,20 +217,62 @@ const plansSlice = createSlice({
             }
         }
     },
-    addPlanRow(state, action: PayloadAction<{ planId: string }>) {
+    addPlanRow(state, action: PayloadAction<{ planId: string; rowIndex?: number }>) {
         const plan = state.items.find(p => p.id === action.payload.planId);
         if (plan) {
-            const newRow: Row = {
-                id: nanoid(),
-                cells: [{ id: nanoid(), content: '', placeholder: 'New section', colSpan: 3 }]
-            };
-            plan.tableContent.push(newRow);
+            const { rowIndex } = action.payload;
+            const newRow: Row = { id: nanoid(), cells: [] };
+
+            let referenceCellCount = 1;
+            // If inserting after a specific row, mimic its structure
+            if (rowIndex !== undefined && plan.tableContent[rowIndex]) {
+                referenceCellCount = plan.tableContent[rowIndex].cells.length;
+            }
+
+            const totalSize = 100;
+            const sizePerCell = totalSize / referenceCellCount;
+
+            for (let i = 0; i < referenceCellCount; i++) {
+                newRow.cells.push({
+                    id: nanoid(),
+                    content: '',
+                    placeholder: 'New cell',
+                    size: sizePerCell,
+                });
+            }
+            // If only one cell, use a more descriptive placeholder.
+            if (newRow.cells.length === 1) {
+                newRow.cells[0].placeholder = 'New section';
+            }
+
+            if (rowIndex !== undefined) {
+                plan.tableContent.splice(rowIndex + 1, 0, newRow);
+            } else {
+                plan.tableContent.push(newRow);
+            }
         }
     },
     removePlanRow(state, action: PayloadAction<{ planId: string; rowId: string }>) {
         const plan = state.items.find(p => p.id === action.payload.planId);
         if (plan) {
             plan.tableContent = plan.tableContent.filter(row => row.id !== action.payload.rowId);
+        }
+    },
+    movePlanRow(state, action: PayloadAction<{ planId: string; fromIndex: number; toIndex: number }>) {
+        const plan = state.items.find(p => p.id === action.payload.planId);
+        if (plan) {
+            const [movedRow] = plan.tableContent.splice(action.payload.fromIndex, 1);
+            plan.tableContent.splice(action.payload.toIndex, 0, movedRow);
+        }
+    },
+    movePlanCell(state, action: PayloadAction<{ planId: string; rowId: string; fromIndex: number; toIndex: number }>) {
+        const plan = state.items.find(p => p.id === action.payload.planId);
+        if (plan) {
+            const row = plan.tableContent.find(r => r.id === action.payload.rowId);
+            if (row) {
+                const [movedCell] = row.cells.splice(action.payload.fromIndex, 1);
+                row.cells.splice(action.payload.toIndex, 0, movedCell);
+            }
         }
     },
     resizePlanRow(state, action: PayloadAction<{ planId: string; rowId: string; sizes: number[] }>) {
@@ -278,16 +312,24 @@ const plansSlice = createSlice({
     mergePlanCell(state, action: PayloadAction<{ planId: string; rowId: string; cellId: string }>) {
         const plan = state.items.find(p => p.id === action.payload.planId);
         if (plan) {
-            const row = plan.tableContent.find(r => r.id === action.payload.rowId);
-            if (row && row.cells.length > 1) {
+            const rowIdx = plan.tableContent.findIndex(r => r.id === action.payload.rowId);
+            if (rowIdx !== -1) {
+                const row = plan.tableContent[rowIdx];
                 const cellIndex = row.cells.findIndex(c => c.id === action.payload.cellId);
-                if (cellIndex >= 0) {
-                    row.cells.splice(cellIndex, 1);
-                    // Redistribute sizes evenly
-                    const evenSize = 100 / row.cells.length;
-                    row.cells.forEach(cell => {
-                        cell.size = evenSize;
-                    });
+                
+                if (cellIndex !== -1) {
+                    row.cells.splice(cellIndex, 1); // Remove the cell
+
+                    if (row.cells.length === 0) {
+                        // If the row is now empty, remove the row itself
+                        plan.tableContent.splice(rowIdx, 1);
+                    } else {
+                        // Otherwise, redistribute sizes evenly
+                        const evenSize = 100 / row.cells.length;
+                        row.cells.forEach(cell => {
+                            cell.size = evenSize;
+                        });
+                    }
                 }
             }
         }
@@ -304,7 +346,7 @@ const plansSlice = createSlice({
 export const {
   createPlan, setCurrentPlan, updatePlan, deletePlan,
   setOutcomesForPlan, updatePlanCell, addPlanRow, removePlanRow,
-  resizePlanRow, splitPlanCell, mergePlanCell,
+  movePlanRow, movePlanCell, resizePlanRow, splitPlanCell, mergePlanCell,
   applyTemplateToPlan
 } = plansSlice.actions
 

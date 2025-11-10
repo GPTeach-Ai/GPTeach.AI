@@ -59,10 +59,6 @@ export default function Nav({ isCollapsed, onToggle }: { isCollapsed: boolean, o
             <span className={textClass}>Tools</span>
           </h3>
           <div className="flex flex-col gap-2">
-            <NavLink to="/builder" className={linkClass}>
-              <ClipboardEdit size={20} className="flex-shrink-0" />
-              <span className={textClass}>Builder</span>
-            </NavLink>
             <NavLink to="/planner" className={linkClass}>
               <ClipboardEdit size={20} className="flex-shrink-0" />
               <span className={textClass}>AI Planner</span>
