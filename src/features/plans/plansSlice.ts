@@ -221,29 +221,15 @@ const plansSlice = createSlice({
         const plan = state.items.find(p => p.id === action.payload.planId);
         if (plan) {
             const { rowIndex } = action.payload;
-            const newRow: Row = { id: nanoid(), cells: [] };
-
-            let referenceCellCount = 1;
-            // If inserting after a specific row, mimic its structure
-            if (rowIndex !== undefined && plan.tableContent[rowIndex]) {
-                referenceCellCount = plan.tableContent[rowIndex].cells.length;
-            }
-
-            const totalSize = 100;
-            const sizePerCell = totalSize / referenceCellCount;
-
-            for (let i = 0; i < referenceCellCount; i++) {
-                newRow.cells.push({
+            const newRow: Row = { 
+                id: nanoid(), 
+                cells: [{
                     id: nanoid(),
                     content: '',
-                    placeholder: 'New cell',
-                    size: sizePerCell,
-                });
-            }
-            // If only one cell, use a more descriptive placeholder.
-            if (newRow.cells.length === 1) {
-                newRow.cells[0].placeholder = 'New section';
-            }
+                    placeholder: 'New section',
+                    size: 100,
+                }] 
+            };
 
             if (rowIndex !== undefined) {
                 plan.tableContent.splice(rowIndex + 1, 0, newRow);
