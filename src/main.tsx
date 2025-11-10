@@ -17,22 +17,25 @@ import Templates from './routes/Templates';
 import Outcomes from './routes/Outcomes';
 import Settings from './routes/Settings';
 import LessonPlanner from './routes/LessonPlanner';
-
-const Placeholder = ({ title }: { title: string }) => <div className="p-6"><h1 className="text-2xl font-bold">{title}</h1><p>This page is a placeholder.</p></div>;
+import Library from './routes/Library'; // <-- ADD THIS LINE
+import ClassDashboard from './routes/ClassDashboard';
+import SignIn from './routes/SignIn';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <AppLayout />, // AppLayout is the shell for ALL pages.
+    element: <AppLayout />,
     children: [
       { index: true, element: <Home /> },
       { path: 'classes', element: <Classes /> },
+      { path: 'class/:classId', element: <ClassDashboard /> },
+      { path: 'class/:classId/folder/:folderId', element: <ClassDashboard /> },
       { path: 'archived-classes', element: <ArchivedClasses /> },
-      { path: 'builder', element: <Builder /> },
       { path: 'planner', element: <LessonPlanner /> },
       { path: 'templates', element: <Templates /> },
       { path: 'outcomes', element: <Outcomes /> },
       { path: 'settings', element: <Settings /> },
+      { path: 'signin', element: <SignIn /> },
     ],
   },
 ]);

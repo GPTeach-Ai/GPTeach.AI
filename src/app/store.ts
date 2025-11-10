@@ -3,7 +3,10 @@ import uiReducer from '../features/ui/uiSlice'
 import templatesReducer from '../features/templates/templatesSlice'
 import plansReducer from '../features/plans/plansSlice'
 import outcomesReducer from '../features/outcomes/outcomesSlice'
-import classesReducer from '../features/classes/classesSlice' // Import the new reducer
+import classesReducer from '../features/classes/classesSlice'
+import foldersReducer from '../features/folders/foldersSlice';
+import clipboardReducer from '../features/clipboard/clipboardSlice';
+import authReducer from '../features/auth/authSlice';
 import { persistMiddleware } from './storage'
 
 export const store = configureStore({
@@ -12,7 +15,10 @@ export const store = configureStore({
     templates: templatesReducer,
     plans: plansReducer,
     outcomes: outcomesReducer,
-    classes: classesReducer, // Add the new reducer
+    classes: classesReducer,
+    folders: foldersReducer,
+    clipboard: clipboardReducer,
+    auth: authReducer,
   },
   middleware: (getDefault) => getDefault().concat(persistMiddleware),
 })
