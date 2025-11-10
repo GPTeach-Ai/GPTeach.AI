@@ -1,17 +1,19 @@
 // Google Gemini AI Service
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const resolvedApiKey =
-  (typeof import.meta !== 'undefined' && (import.meta as any)?.env?.VITE_GEMINI_API_KEY) ??
-  (typeof process !== 'undefined' ? (process as any)?.env?.VITE_GEMINI_API_KEY : undefined);
-
-const GEMINI_API_KEY = resolvedApiKey ?? '';
+// In Vite, environment variables are accessed via import.meta.env
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 if (!GEMINI_API_KEY) {
+  console.error('Gemini API key is missing. Please check:');
+  console.error('1. .env file exists in the project root');
+  console.error('2. VITE_GEMINI_API_KEY is set in .env');
+  console.error('3. Dev server was restarted after creating/modifying .env');
   throw new Error(
-    'Gemini API key is missing. Set VITE_GEMINI_API_KEY in your environment before using Gemini services.'
+    'Gemini API key is missing. Set VITE_GEMINI_API_KEY in your .env file and restart the dev server.'
   );
 }
+
 const MODEL_NAME = 'gemini-2.5-flash';
 
 // Initialize Gemini AI
