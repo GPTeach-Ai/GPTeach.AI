@@ -1,6 +1,7 @@
 import { Link, NavLink } from 'react-router-dom';
 import { Home, FileText, ClipboardEdit, LayoutTemplate, ListChecks, Library, Settings, BookCopy, Archive, ChevronLeft } from 'lucide-react';
 import { cn } from '../lib/utils';
+import UserControl from './UserControl';
 
 export default function Nav({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: () => void }) {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -83,7 +84,8 @@ export default function Nav({ isCollapsed, onToggle }: { isCollapsed: boolean, o
         </div>
       </nav>
 
-      <div className="mt-auto px-2">
+      <div className="mt-auto px-2 space-y-1">
+        <UserControl isCollapsed={isCollapsed} />
         <NavLink to="/settings" className={linkClass}>
           <Settings size={20} className="flex-shrink-0" />
           <span className={textClass}>Settings</span>

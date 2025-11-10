@@ -19,6 +19,7 @@ import Settings from './routes/Settings';
 import LessonPlanner from './routes/LessonPlanner';
 import Library from './routes/Library'; // <-- ADD THIS LINE
 import ClassDashboard from './routes/ClassDashboard';
+import SignIn from './routes/SignIn';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
       { path: 'outcomes', element: <Outcomes /> },
       { path: 'library', element: <Library /> },
       { path: 'settings', element: <Settings /> },
+      { path: 'signin', element: <SignIn /> },
     ],
   },
 ]);

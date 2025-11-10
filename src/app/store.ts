@@ -6,6 +6,7 @@ import outcomesReducer from '../features/outcomes/outcomesSlice'
 import classesReducer from '../features/classes/classesSlice'
 import foldersReducer from '../features/folders/foldersSlice';
 import clipboardReducer from '../features/clipboard/clipboardSlice';
+import authReducer from '../features/auth/authSlice';
 import { persistMiddleware } from './storage'
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
     classes: classesReducer,
     folders: foldersReducer,
     clipboard: clipboardReducer,
+    auth: authReducer,
   },
   middleware: (getDefault) => getDefault().concat(persistMiddleware),
 })
