@@ -8,7 +8,22 @@ import { setOutcomesForPlan } from '../features/plans/plansSlice'
 export default function Outcomes() {
   const dispatch = useDispatch()
   const plans = useSelector((s: RootState) => s.plans.items)
-  const plan = plans[0]
+  const currentPlanId = useSelector((s: RootState) => s.plans.currentId)
+  const plan = plans.find(p => p.id === currentPlanId) ?? plans[0]
+
+  if (!plan) {
+    return (
+      <div className="p-6">
+        <GlassCard>
+          <h2 className="text-xl font-semibold mb-2">No lesson plans yet</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            Create a lesson plan before selecting program outcomes.
+          </p>
+        </GlassCard>
+      </div>
+    )
+  }
+
   return (
     <div className="p-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
