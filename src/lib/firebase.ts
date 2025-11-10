@@ -1,5 +1,6 @@
 import { getApp, getApps, initializeApp, type FirebaseApp, type FirebaseOptions } from 'firebase/app'
 import { Firestore, getFirestore } from 'firebase/firestore'
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, type Auth } from 'firebase/auth'
 
 type FirebaseConfig = FirebaseOptions & {
   projectId: string
@@ -29,6 +30,7 @@ function buildConfig(): FirebaseConfig | null {
 
 let app: FirebaseApp | null = null
 let db: Firestore | null = null
+let auth: Auth | null = null
 
 export function getFirebaseApp(): FirebaseApp | null {
   if (app) return app
@@ -46,6 +48,17 @@ export function getDb(): Firestore | null {
   return db
 }
 
+export function getFirebaseAuth(): Auth | null {
+  if (auth) return auth;
+  const firebaseApp = getFirebaseApp();
+  if (!firebaseApp) return null;
+  auth = getAuth(firebaseApp);
+  return auth;
+}
+
 export function isFirebaseConfigured(): boolean {
   return Boolean(buildConfig())
 }
+
+// Export auth utilities for convenience
+export { GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut };
