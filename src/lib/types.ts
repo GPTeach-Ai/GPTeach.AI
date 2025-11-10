@@ -55,6 +55,7 @@ export type Plan = {
   title: string
   grade: string
   subject: string
+  topic: string;
   duration: number
   outcomes: Outcome[]
   objectives: string
@@ -66,7 +67,11 @@ export type Plan = {
   extensions: string
   references: string
   rubric: Rubric
-  tableContent: Row[] // This property is now correctly included
+  tableContent: Row[]
+  classId?: string
+  folderId?: string | null
+  uploadedFile?: { name: string; type: string }
+  deletedAt?: string | null;
 }
 
 export type Class = {
@@ -78,6 +83,17 @@ export type Class = {
   semester?: string
   color: string;
   archived?: boolean;
+  deletedAt?: string | null;
+}
+
+export type Folder = {
+    id: string;
+    name: string;
+    classId: string;
+    parentId: string | null;
+    createdAt: string;
+    color: string;
+    deletedAt?: string | null;
 }
 
 export type TemplateField =

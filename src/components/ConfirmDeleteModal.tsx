@@ -19,10 +19,10 @@ export default function ConfirmDeleteModal({
   if (!isOpen) return null;
 
   const isArchive = actionType === 'archive';
-  const title = isArchive ? 'Archive Class' : 'Delete Class Permanently';
+  const title = isArchive ? 'Archive Class' : 'Delete Item';
   const bodyText = isArchive 
     ? `Are you sure you want to archive the class "${itemName || 'this item'}"? You can find it later in the archived classes tab.`
-    : `Are you sure you want to permanently delete the class "${itemName || 'this item'}"? This action cannot be undone.`;
+    : `Are you sure you want to delete "${itemName || 'this item'}"? It will be moved to "Recently Deleted" for 7 days.`;
   const confirmText = isArchive ? 'Archive' : 'Delete';
   const Icon = isArchive ? Archive : AlertTriangle;
   const iconBgColor = isArchive ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-red-100 dark:bg-red-900/30';

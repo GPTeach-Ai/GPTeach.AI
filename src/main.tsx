@@ -18,6 +18,7 @@ import Outcomes from './routes/Outcomes';
 import Settings from './routes/Settings';
 import LessonPlanner from './routes/LessonPlanner';
 import Library from './routes/Library'; // <-- ADD THIS LINE
+import ClassDashboard from './routes/ClassDashboard';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'classes', element: <Classes /> },
+      { path: 'class/:classId', element: <ClassDashboard /> },
+      { path: 'class/:classId/folder/:folderId', element: <ClassDashboard /> },
       { path: 'archived-classes', element: <ArchivedClasses /> },
       { path: 'builder', element: <Builder /> },
       { path: 'planner', element: <LessonPlanner /> },
