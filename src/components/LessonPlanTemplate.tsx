@@ -56,16 +56,28 @@ export default function LessonPlanTemplate() {
       <div className="pointer-events-none fixed right-[-10rem] bottom-[-8rem] -z-10 h-96 w-96 rounded-full bg-cyan-400/15 blur-[160px] opacity-40 animate-[float-delayed_32s_ease-in-out_infinite] dark:bg-cyan-500/10" />
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 font-sans text-sm">
-        {/* Header with subtle glass effect */}
-        <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-200/60 dark:border-slate-700/60 backdrop-blur-sm">
-          <input 
-            type="text"
-            value={plan.title}
-            onChange={(e) => dispatch(updatePlan({ id: planId, title: e.target.value }))}
-            placeholder="Untitled Lesson Plan"
-            className="w-full text-2xl md:text-3xl font-bold bg-transparent focus:outline-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-          />
-          <ExportControls />
+        {/* Header Section */}
+        <div className="flex justify-between items-start gap-3 mb-6">
+          {/* Title Card with glass effect */}
+          <div className="flex-1 rounded-xl border border-slate-300/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-800/80 shadow-[0_8px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] backdrop-blur-sm p-4">
+            <div className="flex justify-between items-center">
+              <input 
+                type="text"
+                value={plan.title}
+                onChange={(e) => dispatch(updatePlan({ id: planId, title: e.target.value }))}
+                placeholder="Untitled Lesson Plan"
+                className="flex-1 text-2xl md:text-3xl font-bold bg-transparent focus:outline-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              />
+              <ExportControls />
+            </div>
+          </div>
+          
+          {/* Add Row Button */}
+          <button 
+            onClick={() => dispatch(addPlanRow({ planId }))} 
+            className="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-medium shadow-[0_4px_16px_rgba(16,185,129,0.3)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.4)] transition-all">
+            <Plus size={18} /> Add Row
+          </button>
         </div>
 
         {/* Main table with glass styling */}
@@ -120,15 +132,6 @@ export default function LessonPlanTemplate() {
               )}
             </div>
           ))}
-        </div>
-
-        {/* Add row button with glass effect */}
-        <div className="mt-3">
-          <button 
-            onClick={() => dispatch(addPlanRow({ planId }))} 
-            className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-slate-300/70 dark:border-slate-600/70 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-emerald-50/50 dark:hover:bg-slate-700/40 hover:border-emerald-300/70 dark:hover:border-emerald-600/50 transition-all backdrop-blur-sm">
-            <Plus size={16} /> Add Row
-          </button>
         </div>
       </div>
     </div>
