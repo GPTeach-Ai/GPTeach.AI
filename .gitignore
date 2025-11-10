@@ -141,3 +141,6 @@ vite.config.ts.timestamp-*
 .vite/
 
 gpteachai-2d06b-firebase-adminsdk-fbsvc-01314d70de.json
+
+# keeps changing and messing up entire project
+package-lock.json
