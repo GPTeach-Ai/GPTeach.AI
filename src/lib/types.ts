@@ -51,19 +51,12 @@ export type Class = {
 
 export type TemplateField =
   | 'title'
-  | 'date'
   | 'grade'
   | 'subject'
-  | 'school'
-  | 'teacherName'
-  | 'courseLevel'
-  | 'lessonTime'
-  | 'location'
   | 'duration'
   | 'outcomes'
   | 'objectives'
   | 'materials'
-  | 'resources'
   | 'priorKnowledge'
   | 'activities'
   | 'assessment'
@@ -71,23 +64,44 @@ export type TemplateField =
   | 'extensions'
   | 'references'
   | 'rubric'
-  | 'safety'
-  | 'essentialQuestions'
-  | 'essentialVocabulary'
-  | 'crossCurricular'
-  | 'anticipatorySet'
-  | 'bodySequence'
-  | 'closing'
-  | 'timedActivities'
-  | 'understandingChecks'
-  | 'studentFeedback'
-  | 'lookingAhead'
 
-export type TemplateScaffold = Partial<{
+export type Template = {
+  id: string
+  name: string
+  fields: TemplateField[]
+  variables?: string[] // e.g., ['{duration}', '{grade}']
+}
+
+export type TimedActivity = {
+  id: string
+  minutes: number
+  title: string
+  details: string
+}
+
+export type Cell = {
+  id: string;
+  content: string; // HTML content from the editor
+  placeholder: string;
+  colSpan?: number;
+};
+
+export type Row = {
+  id: string;
+  cells: Cell[];
+  isHeader?: boolean;
+};
+
+export type Plan = {
+  id: string
+  createdAt: string
+  updatedAt: string
+  templateId?: string
   title: string
   grade: string
   subject: string
   duration: number
+  outcomes: Outcome[]
   objectives: string
   materials: string[]
   priorKnowledge: string
@@ -96,18 +110,8 @@ export type TemplateScaffold = Partial<{
   differentiation: string
   extensions: string
   references: string
-}>
-
-export type TemplatePreviewVariant = 'classic' | 'split' | 'sectioned'
-
-export type Template = {
-  id: string
-  name: string
-  summary?: string
-  fields: TemplateField[]
-  variables?: string[] // e.g., ['{duration}', '{grade}']
-  scaffold?: TemplateScaffold
-  previewVariant?: TemplatePreviewVariant
+  rubric: Rubric
+  tableContent: Row[]
 }
 
 export type RubricLevel = {
