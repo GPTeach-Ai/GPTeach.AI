@@ -29,12 +29,6 @@ interface ManualFieldContext {
   suggestion: string;
 }
 
-const quickPrompts = [
-  'Create a complete lesson plan for grade 5 math on fractions',
-  'Generate a lesson plan for grade 3 science about ecosystems',
-  'Make a complete plan for grade 7 English on poetry analysis',
-  'Build a lesson plan for grade 4 social studies on local history',
-];
 
 export default function AIChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -838,16 +832,6 @@ export default function AIChatInterface() {
     return request;
   };
 
-  const handleQuickPrompt = (prompt: string) => {
-    setInputValue(prompt);
-    editorRef.current?.setContent(prompt);
-    requestAnimationFrame(() => {
-      editorRef.current?.focus();
-    });
-    setInputHighlight(true);
-    window.setTimeout(() => setInputHighlight(false), 250);
-  };
-
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -884,23 +868,10 @@ export default function AIChatInterface() {
                   Welcome to GPTeach AI
                 </h3>
                 <p className="mb-8 max-w-md text-center text-sm text-slate-600 dark:text-slate-400">
-                  I can generate complete lesson plans for you! Just tell me the grade, subject, and topic. I'll fill out all the fields automatically using curriculum data. You can also ask questions or request specific improvements.
+                  Welcome to the Lesson Planner.
+I can help you create organized, effective lesson plans in less time.
+Tell me your subject, grade level, and objectives to get started.
                 </p>
-                
-                <div className="w-full max-w-md">
-                  <p className="mb-3 text-xs font-medium text-slate-500 dark:text-slate-400">Quick prompts</p>
-            <div className="flex flex-col gap-2">
-              {quickPrompts.map((prompt) => (
-                <button
-                  key={prompt}
-                        onClick={() => handleQuickPrompt(prompt)}
-                        className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-750"
-                >
-                        {prompt}
-                </button>
-              ))}
-            </div>
-          </div>
               </div>
             ) : (
               /* Messages */

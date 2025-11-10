@@ -294,7 +294,6 @@ function SortableCell({ cell, planId, rowId }: { cell: Cell; planId: string; row
                   <>
                     <button {...listeners} className="p-1 rounded-md text-slate-500 cursor-grab active:cursor-grabbing hover:bg-slate-100 dark:hover:bg-slate-700" title="Move Cell"><GripVertical size={14} /></button>
                     <button onClick={() => setIsMenuOpen(true)} className="p-1 rounded-md text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700" title="More options"><ChevronDown size={14} /></button>
-                    <button ref={aiButtonRef} onClick={openAI} className="p-1 rounded-md text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/30" title="AI Suggestions"><Sparkles size={14} /></button>
                   </>
                 )}
             </div>
